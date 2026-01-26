@@ -1,47 +1,107 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+from PIL import Image
 from goph547lab00 import arrays
 
-# --- Part 1: Basic Array Operations ---
-print("1. Array of ones (3x5):")
-print(np.ones((3, 5)))
+# --- Basic Array Operations (Parts 1-9) ---
 
-print("\n3. Column vector of odd numbers (45-73):")
+# 1. Array of ones (3 rows, 5 columns)
+ones_3x5 = np.ones((3, 5))
+print("1. 3x5 Array of ones:\n", ones_3x5)
+
+# 2. Array of NaN (6 rows, 3 columns)
+nan_6x3 = np.full((6, 3), np.nan)
+print("\n2. 6x3 Array of NaNs:\n", nan_6x3)
+
+# 3. Column vector of odd numbers between 44 and 75
+# 45 is the first odd, 75 is the stop (exclusive), step 2
 odd_vector = np.arange(45, 75, 2).reshape(-1, 1)
-print(odd_vector)
+print("\n3. Column vector of odd numbers (44-75):\n", odd_vector)
 
-print(f"\n4. Sum of the odd vector: {np.sum(odd_vector)}")
+# 4. Sum of the odd vector
+vector_sum = np.sum(odd_vector)
+print(f"\n4. Sum of odd vector: {vector_sum}")
 
-# --- Part 2: Image Processing ---
+# 5. Array A
+A = np.array([[5, 7, 2], [1, -2, 3], [4, 4, 4]])
+print("\n5. Array A:\n", A)
+
+# 6. Identity Array B using a single command
+B = np.eye(3)
+print("\n6. Array B (Identity):\n", B)
+
+# 7. Element-wise multiplication
+elem_mult = A * B
+print("\n7. Element-wise multiplication (A * B):\n", elem_mult)
+
+# 8. Dot product (Matrix multiplication)
+dot_prod = A @ B
+print("\n8. Dot product (A @ B):\n", dot_prod)
+
+# 9. Cross product
+cross_prod = np.cross(A, B)
+print("\n9. Cross product of A and B:\n", cross_prod)
+
+
+# --- Image Processing (Parts 10-16) ---
+
 img_path = 'examples/rock_canyon.jpg'
 
 if os.path.exists(img_path):
-    # Use the function from your package
+    # 10. Load image using the arrays module
     img, gray_img = arrays.load_images(img_path)
-    print(f"\nImage loaded. Color shape: {img.shape}")
     
-    # Generate Plots
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    # 11. Plot and print shape
+    plt.figure()
+    plt.imshow(img)
+    plt.title("Original Image")
+    print(f"\n11. Original color image shape: {img.shape}")
+    plt.show()
 
-    # Horizontal Profile (X-axis)
-    x = range(img.shape[1])
-    ax1.plot(x, img[:,:,0].mean(axis=0), color='red', label='Red')
-    ax1.plot(x, img[:,:,1].mean(axis=0), color='green', label='Green')
-    ax1.plot(x, img[:,:,2].mean(axis=0), color='blue', label='Blue')
-    ax1.plot(x, img.mean(axis=(0,2)), color='black', linewidth=2, label='Total Mean')
-    ax1.set_title("Horizontal Profile")
+    # 12. Grayscale shape
+    print(f"12. Grayscale image shape: {gray_img.shape}")
+
+    # 13. Crop the pinnacle (using the function in arrays.py)
+    # Note: Ensure crop indices in arrays.py isolate the pillar correctly
+    small_gray_image = arrays.crop_pinnacle(gray_img)
+    plt.figure()
+    plt.imshow(small_gray_image, cmap='gray')
+    plt.title("Cropped Pinnacle")
+    plt.show()
+
+    # 14 & 15. RGB Summary Subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
+
+    # i) Mean along Y-direction (Vertical axis) vs X-coordinate
+    x_coords = np.arange(img.shape[1])
+    ax1.plot(x_coords, img[:, :, 0].mean(axis=0), color='red', label='Mean Red')
+    ax1.plot(x_coords, img[:, :, 1].mean(axis=0), color='green', label='Mean Green')
+    ax1.plot(x_coords, img[:, :, 2].mean(axis=0), color='blue', label='Mean Blue')
+    ax1.plot(x_coords, img.mean(axis=(0, 2)), color='black', linewidth=3, label='Mean RGB')
+    ax1.set_xlabel("X-coordinate (pixels)")
+    ax1.set_ylabel("Mean Intensity")
+    ax1.set_title("Horizontal Profile (Mean along Y)")
     ax1.legend()
 
-    # Vertical Profile (Y-axis)
-    y = range(img.shape[0])
-    ax2.plot(img.mean(axis=(1,2)), y, color='black', linewidth=2)
-    ax2.set_title("Vertical Profile")
-    ax2.invert_yaxis()
+    # ii) Mean along X-direction (Horizontal axis) vs Y-coordinate
+    y_coords = np.arange(img.shape[0])
+    ax2.plot(img[:, :, 0].mean(axis=1), y_coords, color='red', label='Mean Red')
+    ax2.plot(img[:, :, 1].mean(axis=1), y_coords, color='green', label='Mean Green')
+    ax2.plot(img[:, :, 2].mean(axis=1), y_coords, color='blue', label='Mean Blue')
+    ax2.plot(img.mean(axis=(1, 2)), y_coords, color='black', linewidth=3, label='Mean RGB')
+    ax2.set_ylabel("Y-coordinate (pixels)")
+    ax2.set_xlabel("Mean Intensity")
+    ax2.set_title("Vertical Profile (Mean along X)")
+    ax2.invert_yaxis() # Match image coordinate system (0 at top)
+    ax2.legend()
 
+    # 16. Save the figure
     plt.tight_layout()
-    plt.savefig('examples/rock_canyon_summary.png')
-    print("Plot saved as 'rock_canyon_summary.png'")
+    save_path = 'examples/rock_canyon_RGB_summary.png'
+    plt.savefig(save_path)
+    print(f"\n16. Figure saved to {save_path}")
     plt.show()
+
 else:
-    print(f"Error: File {img_path} not found.")
+    print(f"\nError: {img_path} not found. Ensure the image is in the examples/ folder.")
