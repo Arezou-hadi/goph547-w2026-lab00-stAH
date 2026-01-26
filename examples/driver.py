@@ -61,10 +61,11 @@ if os.path.exists(img_path):
 
     # 12. Grayscale shape
     print(f"12. Grayscale image shape: {gray_img.shape}")
+    img_gray = np.asarray(Image.open("examples/rock_canyon.jpg").convert("L"))
 
     # 13. Crop the pinnacle (using the function in arrays.py)
     # Note: Ensure crop indices in arrays.py isolate the pillar correctly
-    small_gray_image = arrays.crop_pinnacle(gray_img)
+    small_gray_image = img_gray[150:240, 110:150]
     plt.figure()
     plt.imshow(small_gray_image, cmap='gray')
     plt.title("Cropped Pinnacle")
