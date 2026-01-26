@@ -1,12 +1,12 @@
 import numpy as np
 from PIL import Image
 
-def square_ones(n):
-    """Creates a square array of ones of size n x n."""
-    return np.ones((n, n))
-
 def load_images(path):
-    """Loads a color image and its grayscale version."""
     img = np.asarray(Image.open(path))
     gray_img = np.asarray(Image.open(path).convert("L"))
     return img, gray_img
+
+def crop_pinnacle(gray_img):
+    # These indices isolate the pillar (middle-left)
+    # You may need to tweak these based on your specific image file
+    return gray_img[250:850, 50:450]
